@@ -47,7 +47,7 @@ class Model implements ModelInterface
      */
     public static function findOne($condition = null)
     {
-        list($where, $params) = self::bindWhere($condition);
+        list($where, $params) = static::buildWhere($condition);
         $sql = "select * from " . static::tableName() . $where;
 
         $stmt = static::getDb()->prepare($sql);
@@ -55,7 +55,7 @@ class Model implements ModelInterface
 
         if ($res) {
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            self::arrToObject($row);
+            return self::arrToObject($row);
         }
         return null;
     }
@@ -63,7 +63,7 @@ class Model implements ModelInterface
     public static function findAll($condition=null)
     {
         $models = [];
-        list($where, $params) = self::bindWhere($condition);
+        list($where, $params) = static::buildWhere($condition);
         $sql = "select * from " . static::tableName() . $where;
 
         $stmt = static::getDb()->prepare($sql);
@@ -86,7 +86,7 @@ class Model implements ModelInterface
     {
         $keys = [];
         $values = [];
-        list($where, $params) = self::bindWhere($condition);
+        list($where, $params) = static::buildWhere($condition);
 
         foreach ($attributes as $key=>$attribute){
             array_push($keys, " $key = ? ");
@@ -99,7 +99,16 @@ class Model implements ModelInterface
 
         $sql = "update " . static::tableName() . " set " . $setAttritubes . $where;
 
-        $ret = self::executeCmd($sql,$params);
+        $ret = static::executeCmd($sql,$params);
+        return $ret;
+    }
+
+    public static function deleteAll($condition)
+    {
+        list($where, $params) = static::buildWhere($condition);
+        
+        $sql = "delete from " . static::tableName() . $where; 
+        $ret = static::executeCmd($sql, $params);
         return $ret;
     }
 
@@ -108,7 +117,7 @@ class Model implements ModelInterface
      * @param $condition
      * @return array
      */
-    public static function bindWhere($condition)
+    public static function buildWhere($condition)
     {
         $params = [];
         $where = '';
@@ -139,9 +148,7 @@ class Model implements ModelInterface
         $holders = array_fill(0,count($keys), '?');
 
         $sql .= " ( " . implode(' , ',$keys) . " ) values (" . implode(' , ',$holders). ")";
-        $stmt = static::getDb()->prepare($sql);
-
-        $ret = $stmt->execute($params);
+       $ret = static::executeCmd($sql, $params);
         // 并设置id的值
         $primaryKeys = static::primaryKey();
         foreach ($primaryKeys as $key=>$primaryKey){
@@ -149,6 +156,37 @@ class Model implements ModelInterface
         }
 
         return $ret;
+    }
+
+    public function update()
+    {
+        $primaryKeys = static::primaryKey();
+        $condition = [];
+        foreach ($primaryKeys as $key=>$primaryKey){
+            if(isset($this->$primaryKey)){
+                $condition[$primaryKey] =  $this->$primaryKey;
+            }
+        }
+        $attributes = [];
+        foreach ($this as $key=>$val){
+            if(!in_array($key, $primaryKeys)){
+                $attributes[$key] = $val;
+            }
+        }
+        return static::updateAll($condition, $attributes);
+    }
+
+    public function delete()
+    {
+        $primaryKeys = static::primaryKey();
+        $condition = [];
+        foreach ($primaryKeys as $key=>$primaryKey){
+            if(isset($this->$primaryKey)){
+                $condition[$primaryKey] =  $this->$primaryKey;
+            }
+        }
+        
+        return static::deleteAll($condition);
     }
 
     /**

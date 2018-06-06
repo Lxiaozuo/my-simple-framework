@@ -15,7 +15,7 @@ class SiteController extends Contoller
 {
     public function actionIndex()
     {
-        $model = new User();
+//        $model = new User();
 //        $res = $model->findAll(['id'=>2]);
 ////        $res = $model->findOne();
 ////        var_dump($res);
@@ -25,9 +25,13 @@ class SiteController extends Contoller
 //        $model->email = '3335@qq.com';
 //        $model->insert();
 //        var_dump($model);
-        $ret = $model->updateAll(['id' => 2], ['user_name' => 'tototo', 'email'=>'cici@mail.com']);
-
-        var_dump($ret);die;
+//        $ret = $model->updateAll(['id' => 2], ['user_name' => 'tototo', 'email'=>'cici@mail.com']);
+//        $ret = $model->deleteAll(['user_name'=>'haha']);
+//        $model = User::findOne(['id'=>1]);
+//        $model->user_name = 'udpateName';
+//        $model->email = 'aa@qqcc.com';
+//        $model->delete();
+//        var_dump($model);die;
     }
 
 }
