@@ -15,10 +15,10 @@ class SiteController extends Contoller
 {
     public function actionIndex()
     {
-//        $model = new User();
+        $model = new User();
 //        $res = $model->findAll(['id'=>2]);
-////        $res = $model->findOne();
-////        var_dump($res);
+        $res = $model->findOne();
+        var_dump($res);
 //        // 插入数据
 //        $model->user_name = 'haha2';
 //        $model->passwd = md5('test');

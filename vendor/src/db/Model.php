@@ -1,6 +1,6 @@
 <?php
-
 namespace sf\db;
+use Sf;
 
 class Model implements ModelInterface
 {
@@ -13,17 +13,8 @@ class Model implements ModelInterface
     {
         if (empty(static::$pdo)) {
 
-            $host = 'localhost';
-            $database = 'simpleFram';
-            $username = 'root';
-            $password = 'root';
-            $options = [
-                \PDO::ATTR_EMULATE_PREPARES => false,
-                \PDO::ATTR_STRINGIFY_FETCHES => false
-            ];
-            // PDO::ATTR_EMULATE_PREPARES 提取的时候将数值转换为字符串
-            // PDO::ATTR_EMULATE_PREPARES 启用或禁用预处理语句的模拟
-            static::$pdo = new \PDO("mysql:host=$host;dbname=$database;", $username, $password, $options);
+            static::$pdo = Sf::createObject('db')->getDb();
+//            static::$pdo = new \PDO("mysql:host=$host;dbname=$database;", $username, $password, $options);
             static::$pdo->exec("set names 'UTF8'");
         }
 

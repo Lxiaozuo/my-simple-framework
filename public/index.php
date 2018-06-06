@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: summer.zuo
- * Date: 2018/6/5
- * Time: 13:55
- */
+define('SF_PATH', dirname(__DIR__));
 
 // composer autoload
-require_once(__DIR__ . '/../vendor/autoload.php');
+require_once(SF_PATH . '/vendor/autoload.php');
+
+require_once(SF_PATH . '/vendor/src/Sf.php');
 
 $application = new sf\web\Application();
 $application->run();
