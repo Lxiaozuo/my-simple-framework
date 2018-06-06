@@ -1,0 +1,27 @@
+{
+    "name": "summer.zuo/my-simple-framework",
+    "description": "My first framework",
+	"license": "MIT",
+    "authors": [
+        {
+            "name": "summer",
+            "email": "summer_zuo@yeah.net"
+        }
+    ],
+    "require": {},
+	"autoload":{
+		"psr-4":{
+			"sf\\": "vendor/src/",
+			"app\\": ""
+		}
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "http://packagist.phpcomposer.com"
+		},
+		{
+			"packagist": false
+		}
+	]
+}
