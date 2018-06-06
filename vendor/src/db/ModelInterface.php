@@ -14,12 +14,12 @@ interface ModelInterface
     public static function findAll($condition);
 
     public static function updateAll($condition, $attributes);
-//
-//    public static function deleteAll($condition);
-//
+
+    public static function deleteAll($condition);
+
     public function insert();
-//
-//    public function update();
-//
-//    public function delete();
+
+    public function update();
+
+    public function delete();
 }
