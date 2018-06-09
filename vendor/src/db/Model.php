@@ -14,7 +14,6 @@ class Model implements ModelInterface
         if (empty(static::$pdo)) {
 
             static::$pdo = Sf::createObject('db')->getDb();
-//            static::$pdo = new \PDO("mysql:host=$host;dbname=$database;", $username, $password, $options);
             static::$pdo->exec("set names 'UTF8'");
         }
 

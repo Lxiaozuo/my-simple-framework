@@ -2,7 +2,7 @@
 
 namespace sf\web;
 
-class Contoller extends \sf\base\Contoller
+class Contoller extends t
 {
     /**
      * render the views

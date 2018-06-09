@@ -15,23 +15,49 @@ class SiteController extends Contoller
 {
     public function actionIndex()
     {
-        $model = new User();
-//        $res = $model->findAll(['id'=>2]);
-        $res = $model->findOne();
+        // 实现file缓存
+        $cache = \Sf::createObject('cache');
+//        $cache->set('test', '测试缓存');
+        $res = $cache->exists('test');
         var_dump($res);
-//        // 插入数据
-//        $model->user_name = 'haha2';
-//        $model->passwd = md5('test');
-//        $model->email = '3335@qq.com';
-//        $model->insert();
-//        var_dump($model);
-//        $ret = $model->updateAll(['id' => 2], ['user_name' => 'tototo', 'email'=>'cici@mail.com']);
-//        $ret = $model->deleteAll(['user_name'=>'haha']);
-//        $model = User::findOne(['id'=>1]);
-//        $model->user_name = 'udpateName';
-//        $model->email = 'aa@qqcc.com';
-//        $model->delete();
-//        var_dump($model);die;
+    }
+
+    public function actionTest()
+    {
+        $content = <<<VIEW
+<?php
+\$name = 'test';
+\$str = "{{ \$name }}";
+?>
+
+<html>
+  <body>{{ \$name }}</body>
+<html>
+VIEW;
+        $result = '';
+//        $arr = token_get_all($content);
+        foreach (token_get_all($content) as $token) {
+            if (is_array($token)) {
+                var_dump($token);die;
+                list($id, $content) = $token;
+                if ($id == T_INLINE_HTML) {
+                    $content = preg_replace('/{{(.*)}}/', '<?php echo $1 ?>', $content);
+                }
+                $result .= $content;
+            } else {
+                $result .= $token;
+            }
+        }
+
+    }
+
+    protected function compileStatements($content)
+    {
+        return preg_replace_callback(
+            '/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', function ($match) {
+            return $this->compileStatement($match);
+        }, $content
+        );
     }
 
 }
