@@ -33,4 +33,13 @@ abstract class Application
      * Handles the specified request.
      */
     abstract public function handleRequest();
+
+    public function coreCopment()
+    {
+        return [
+            'request' => [
+                'class' => 'sf\web\Request'
+            ]
+        ];
+    }
 }
