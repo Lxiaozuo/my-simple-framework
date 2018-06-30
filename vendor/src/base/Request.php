@@ -11,6 +11,8 @@ namespace sf\base;
 
 class Request extends BaseObject
 {
+
+    public $controllerNamespace = 'app\\controllers';
     public function __construct()
     {
 

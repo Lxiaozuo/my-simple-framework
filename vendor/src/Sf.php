@@ -1,5 +1,5 @@
 <?php
-
+namespace sf;
 /**
  * Sf is a helper class serving common framework functionalities.
  * Class Sf
@@ -11,23 +11,50 @@ class Sf
      * You may view this method as an enhanced version of the `new` operator.
      * @param string $name the object name
      */
-    public static function createObject($name)
+//    public static function createObject($name)
+//    {
+//        // 加载相应配置文件
+//        $config = require(SF_PATH . "/common/config/${name}.php");
+//        $class = $config['class'];
+//
+//        unset($config['class']);
+//
+//        if (class_exists($class)) {
+//            $classModel = new $class();
+//            foreach ($config as $key => $val) {
+//                $classModel->$key = $val;
+//            }
+//            return $classModel;
+//        } else {
+//            // 类不存在
+//            return null;
+//        }
+//    }
+
+    public static function createObject($class)
     {
-        // 加载相应配置文件
-        $config = require(SF_PATH . "/common/config/${name}.php");
-        $class = $config['class'];
-
-        unset($config['class']);
-
-        if (class_exists($class)) {
-            $classModel = new $class();
-            foreach ($config as $key => $val) {
-                $classModel->$key = $val;
+        $constructorParams = [];
+        // 1.反射类
+        $reflection = new \ReflectionClass($class['class']);
+        // 2.获取构造函数信息
+        $constructor = $reflection->getConstructor();
+        // 3.获取构造函数的参数
+        foreach ($constructor->getParameters() as $params) {
+//            $constructorParams[] = $params;
+            if ($params->isDefaultValueAvailable()) {
+                $constructorParams[] = $params->getDefaultValue();
             }
-            return $classModel;
-        } else {
-            // 类不存在
-            return null;
         }
+
+        // 4.判断反射类是否可实例化
+        if (!$reflection->isInstantiable()) {
+            // 不可实例化
+            return false;
+        }
+        if (empty($constructorParams)){
+            return $reflection->newInstanceArgs();
+        }
+        return $reflection->newInstanceArgs($constructorParams);
     }
+
 }
