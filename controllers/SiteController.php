@@ -15,7 +15,7 @@ class SiteController extends Contoller
 {
     public function actionIndex()
     {
-        var_dump(123);die;
+        var_dump(12311);die;
         // 实现file缓存
         $cache = \Sf::createObject('cache');
 //        $cache->set('test', '测试缓存');

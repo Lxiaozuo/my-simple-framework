@@ -16,6 +16,7 @@ abstract class Application
      */
     public $controllerNamespace = 'app\\controllers';
 
+    public $defaultRoute = 'site/index';
     /**
      * Runs the application.
      * This is the main entrance of an application.
@@ -34,7 +35,7 @@ abstract class Application
      */
     abstract public function handleRequest();
 
-    public function coreCopment()
+    public function coreComponent()
     {
         return [
             'request' => [

@@ -33,18 +33,32 @@ class Sf
 
     public static function createObject($class)
     {
+        if( is_string($class)){
+            $className = $class;
+        } else if ( is_array($class) && isset($class['class'])) {
+            $className = $class['class'];
+        }
+        return self::getInstance($className);
+    }
+
+    public static function getInstance($class)
+    {
         $constructorParams = [];
         // 1.反射类
-        $reflection = new \ReflectionClass($class['class']);
+        $reflection = new \ReflectionClass($class);
         // 2.获取构造函数信息
         $constructor = $reflection->getConstructor();
+
         // 3.获取构造函数的参数
-        foreach ($constructor->getParameters() as $params) {
+        if($constructor){
+            foreach ($constructor->getParameters() as $params) {
 //            $constructorParams[] = $params;
-            if ($params->isDefaultValueAvailable()) {
-                $constructorParams[] = $params->getDefaultValue();
+                if ($params->isDefaultValueAvailable()) {
+                    $constructorParams[] = $params->getDefaultValue();
+                }
             }
         }
+
 
         // 4.判断反射类是否可实例化
         if (!$reflection->isInstantiable()) {
@@ -56,5 +70,4 @@ class Sf
         }
         return $reflection->newInstanceArgs($constructorParams);
     }
-
 }

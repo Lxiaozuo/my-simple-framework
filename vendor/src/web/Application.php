@@ -31,10 +31,8 @@ class Application extends \sf\base\Application
     public function handleRequest()
     {
         $request = $this->getRequest();
-        // 实例化类
-        $requestClass = Sf::createObject($request);
         // 处理请求
-        $requestClass->resolve();
+        $request->resolve();
     }
 
     /**
@@ -43,7 +41,8 @@ class Application extends \sf\base\Application
      */
     public function getRequest()
     {
-        return $this->get('request');
+        $request = $this->get('request');
+        return Sf::createObject($request);
     }
 
     // 拉取配置信息
@@ -53,7 +52,7 @@ class Application extends \sf\base\Application
             return $this->_components[$id];
         }
         $components = [];
-        foreach ($this->coreCopment() as $module=>$item) {
+        foreach ($this->coreComponent() as $module=>$item) {
             if ($id == $module) {
                 $components[$id] = $item;
                 $this->_components[$id] = $item;
@@ -63,9 +62,9 @@ class Application extends \sf\base\Application
         return $this->_components[$id];
     }
 
-    public function coreCopment()
+    public function coreComponent()
     {
-        return array_merge(parent::coreCopment(),[
+        return array_merge(parent::coreComponent(),[
            'request'    => ['class' => 'sf\web\Request']
         ]);
     }
