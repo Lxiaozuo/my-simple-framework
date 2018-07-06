@@ -1,13 +1,15 @@
 <?php
+
 namespace sf\base;
 
 use Exception;
+use sf\di\ServiceLocator;
 
 /**
  * Application is the base class for all application classes.
  * @author Harry Sun <sunguangjun@126.com>
  */
-abstract class Application
+class Application extends ServiceLocator
 {
     /**
      * @var string the namespace that controller classes are located in.
@@ -29,8 +31,12 @@ abstract class Application
         }
     }
 
-    /**
-     * Handles the specified request.
-     */
-    abstract public function handleRequest();
+    public function getCoreComponents()
+    {
+        return [
+            'request' => [
+                'class' => 'sf\web\Request'
+            ]
+        ];
+    }
 }

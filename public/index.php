@@ -9,5 +9,8 @@
 // composer autoload
 require_once(__DIR__ . '/../vendor/autoload.php');
 
-$application = new sf\web\Application();
+$config = require_once(__DIR__ . '/../config/main.php');
+
+$application = new sf\web\Application($config);
+
 $application->run();
