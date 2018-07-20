@@ -7,7 +7,7 @@
  */
 class test
 {
-    public function __construct( $a,$b =10)
+    public function __construct( $a,$b)
     {
 
     }
@@ -18,7 +18,7 @@ class A
 }
 class Instance
 {
-    public $id;
+    private $id;
 
     public function __construct($id)
     {
@@ -30,12 +30,28 @@ class Instance
 //        $t = new static($id);
 
     }
-}
 
-$reflection = new ReflectionClass('test');
-$constructor = $reflection->getConstructor();
+    public function __get($name)
+    {
+        $getter = 'get' . $name;
+        var_dump($getter);die;
+        $this->$getter();
 
-foreach ($constructor->getParameters() as $param){
-    $t = Instance::of('abc');
-    var_dump($param->getClass(),$t->id);die;
+    }
+
+    public function getTest()
+    {
+        var_dump('tgsss');die;
+    }
+
+    public function __set($name, $value)
+    {
+        var_dump($name,1114444);die;
+        // TODO: Implement __set() method.
+    }
 }
+$a['test'][] = '123';
+
+var_dump($a['test']);
+//var_dump($instance->ida = 232);
+// 方法名不区分大小写

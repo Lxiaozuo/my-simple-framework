@@ -15,6 +15,7 @@ class SiteController extends Contoller
 {
     public function actionIndex()
     {
+        var_dump(123);die;
 //        $model = new User();
 //        $res = $model->findAll(['id'=>2]);
 ////        $res = $model->findOne();

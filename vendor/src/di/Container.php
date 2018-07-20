@@ -14,8 +14,11 @@ class Container
 
     private $_dependencies;
 
+    private $_definitions;
+
+    private $_params;
     /**
-     * 获取类
+     * 返回请求类的实例 Return a instance of request class
      * $params array 构造函数参数的值
      * $config array 扩展参数
      */
@@ -25,14 +28,24 @@ class Container
             return $this->_sigletons[$class];
         }
 
-        $this->build($class, $params, $config);
+        if (isset($this->_definitions[$class])) {
+            $definition = $this->_definitions[$class];
+        } else {
+            $definition = $class;
+        }
 
+        // 合并set注入的参数,以及现传入的参数
+        $params = $this->mergeParams($class, $params);
+
+        return $this->build($definition, $params, $config);
     }
+
 
     public function build($class, $params = [], $config = [])
     {
         list($reflection, $dependencies) = $this->getDependencies($class);
 
+        // 合并构造函数的参数值
         foreach ($params as $key => $param) {
             $dependencies[$key] = $param;
         }
@@ -43,10 +56,12 @@ class Container
         // 实例化
         $object = $reflection->newInstanceArgs($dependencies);
 
+        // 扩展参数
         foreach ($config as $name=>$item) {
             $object->$name = $item;
         }
 
+        $this->_sigletons[$class] = $object;
         return $object;
     }
 
@@ -58,6 +73,11 @@ class Container
 
         $dependencies = [];
         $reflection = new \ReflectionClass($class);
+
+        if (!$reflection->isInstantiable()) {
+            throw new \Exception("can't instant the $class");
+        }
+
         $constructor = $reflection->getConstructor();
         // 如果存在构造函数,则循环构造函数的参数
         if ($constructor !== null) {
@@ -91,5 +111,59 @@ class Container
             }
         }
         return $dependencies;
+    }
+
+
+    public function clear()
+    {
+        unset($this->_dependencies);
+        unset($this->_sigletons);
+        unset($this->_reflections);
+    }
+
+    /**
+     * Register a class definition with the container
+     * $container->set('db','sf\db\Connection');
+     * $container->set('sf\db\Connection');
+     * $container->set('db',[
+     *      'class' =>  'sf\db\Connection'
+     * ]);
+     * $container->set('db',function(){});
+     * @param
+     */
+    public function set($class, $definition = [], $params = [])
+    {
+        if (empty($definition)) {
+            $this->_definitions[$class] = $class;
+        } elseif (is_array($definition) && isset($definition['class'])) {
+            $this->_definitions[$class] = $definition['class'];
+        } elseif (is_callable($definition)) {
+            $this->_definitions[$class] = $definition;
+        } else {
+            throw new \Exception('definition error');
+        }
+
+        $this->_params[$class] = $params;
+        unset($this->_sigletons[$class]);
+    }
+
+    /**
+     * 合并set传入和get传入的params
+     * @param $class
+     * @param $params
+     * @return mixed
+     */
+    public function mergeParams($class, $params)
+    {
+        if (empty($this->_params[$class])) {
+            return $params;
+        }
+
+        $setParams = $this->_params[$class];
+
+        foreach ($params as $key=>$param) {
+            $setParams[$key] = $param;
+        }
+        return $setParams;
     }
 }

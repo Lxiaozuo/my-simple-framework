@@ -5,14 +5,16 @@
  * Date: 2018/7/6
  * Time: 15:48
  */
+
 namespace sf;
+
 use sf\di\Container;
 
 class Sf
 {
     public static $container;
 
-    public static function createObject($type ,$params = [])
+    public static function createObject($type, $params = [])
     {
         if (self::$container === null) {
             self::$container = new Container;
@@ -23,7 +25,7 @@ class Sf
         } elseif (is_array($type) && isset($type['class'])) {
             $class = $type['class'];
             unset($type['class']);
-            return self::$container->get($class ,$params ,$type);
+            return self::$container->get($class, $params, $type);
         } elseif (is_callable($type)) {
             return self::$container->invoke($type);
         } elseif (is_object($type)) {
@@ -31,8 +33,14 @@ class Sf
         } else {
             throw new \Exception("format error");
         }
-
-
     }
 
+    public static function configure($object, $property)
+    {
+        foreach ($property as $name => $item) {
+            $object->$name = $item;
+        }
+
+        return $object;
+    }
 }

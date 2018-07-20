@@ -1,6 +1,7 @@
 <?php
 namespace sf\web;
-use \sf;
+use sf;
+
 /**
  * Application is the base class for all application classes.
  */
@@ -8,13 +9,19 @@ class Application extends sf\base\Application
 {
     public function __construct($config)
     {
-        $this->loadConfig($config);
+        if (!empty($config)) {
+            sf\Sf::configure($this, $config);
+        }
+        return $this;
     }
 
     public function handleRequest()
     {
         $request = $this->getRequest();
-        return $request->resolve();
+        list($route, $params) = $request->resolve();
+        list($controller, $action) = explode('/',$route);
+        $controller = $this->createControler($controller);
+        return $controller->runAction($controller, $action, $params);
     }
 
     public function getRequest()
@@ -22,10 +29,12 @@ class Application extends sf\base\Application
         return $this->get('request');
     }
 
-
-    public function loadConfig($config)
+    public function createControler($controller)
     {
-        parent::$config = $config;
+        $controllerName = $controller . 'Controller';
+        $controllerNameSpace = 'app\controllers\\';
+        $object = sf\sf::createObject($controllerNameSpace . $controllerName);
+        return $object;
     }
 
 //    /**

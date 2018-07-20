@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'components'    =>  [
-        'request'   =>  'sf\web\Request'
+    'components' => [
+        'request' => [
+            'class'  =>  'sf\web\Request'
+        ]
     ]
 ];
